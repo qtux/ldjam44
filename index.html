@@ -36,6 +36,8 @@
 	var cursors;
 	var score;
 	var scoreText;
+	var jumpLimit;
+	var jumps;
 
 	function initCoins()
 	{
@@ -49,6 +51,10 @@
 	function collectCoin(player, coin)
 	{
 		coin.disableBody(true, true);
+		if (jumpLimit > 1)
+		{
+			jumpLimit -= 1;
+		}
 		
 		score += 10;
 		scoreText.setText("Score: " + score);
@@ -90,6 +96,8 @@
 
 		score = 0;
 		scoreText = this.add.text(16, 16, "Score: " + score, { fontSize: "32px", fill: "#000" });
+		jumpLimit = 50;
+		jumps = 0;
 	}
 	
 	function update()
@@ -98,11 +106,12 @@
 		{
 			initCoins()
 		}
-		if(cursors.left.isDown)
+
+		if (cursors.left.isDown)
 		{
 			player.setVelocityX(-160);
 		}
-		else if(cursors.right.isDown)
+		else if (cursors.right.isDown)
 		{
 			player.setVelocityX(160);
 		}
@@ -111,10 +120,16 @@
 			player.setVelocityX(0);
 		}
 
-		if(cursors.up.isDown)
+		if (cursors.up.isDown && jumps < jumpLimit)
 		{
 			player.setVelocityY(-330);
+			jumps += 1;
 		}
+		if (player.body.blocked.down)
+		{
+			jumps = 0;
+		}
+		scoreText.setText("Score: " + score + " Jumps:  " + jumps + " Total Jumps: " + jumpLimit);
 	}
 	</script>
 
