@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>TODO: Name</title>
+	<!--https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js-->
+	<script src="phaser/dist/phaser-arcade-physics.min.js"></script>
+</head>
+<body>
+
+	<script>
+	var width = window.innerWidth * window.devicePixelRatio - 20
+	var height = window.innerHeight * window.devicePixelRatio - 20
+
+	var config = {
+		type: Phaser.CANVAS,
+		width: width,
+		height: height,
+		physics: {
+			default: "arcade",
+			arcade: {
+				gravity: { y: 200 }
+			}
+		},
+		scene: {
+			preload: preload,
+			create: create
+		}
+	};
+
+	var game = new Phaser.Game(config);
+	var ground;
+
+	function preload ()
+	{
+		this.load.image("sky", "assets/sky.png");
+		this.load.image("ground", "assets/ground.png");
+		this.load.spritesheet("player", "assets/player.png", { frameWidth: 16, frameHeight: 32 });
+	}
+
+	function create ()
+	{
+		this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, "sky").setScale(2);
+
+		ground = this.physics.add.staticGroup();
+
+		ground.create(width/2, height - 32, "ground").setScale(2).refreshBody();
+
+		var player = this.physics.add.image(500, 100, "player");
+
+		player.setVelocity(100, 200);
+		player.setBounce(1, 1);
+		player.setCollideWorldBounds(true);
+		this.physics.add.collider(player, ground);
+	}
+	</script>
+
+</body>
+</html>
