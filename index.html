@@ -19,26 +19,51 @@
 		physics: {
 			default: "arcade",
 			arcade: {
-				gravity: { y: 200 }
+				gravity: { y: 300 }
 			}
 		},
 		scene: {
 			preload: preload,
-			create: create
+			create: create,
+			update: update
 		}
 	};
 
 	var game = new Phaser.Game(config);
 	var ground;
+	var player;
+	var coins;
+	var cursors;
+	var score;
+	var scoreText;
 
-	function preload ()
+	function initCoins()
+	{
+		coins.children.iterate(function(child) {
+			child.enableBody(true,
+				Phaser.Math.Between(40, width - 40), Phaser.Math.Between(40, height - 40),
+				true, true);
+		});
+	}
+
+	function collectCoin(player, coin)
+	{
+		coin.disableBody(true, true);
+		
+		score += 10;
+		scoreText.setText("Score: " + score);
+	}
+
+
+	function preload()
 	{
 		this.load.image("sky", "assets/sky.png");
 		this.load.image("ground", "assets/ground.png");
 		this.load.spritesheet("player", "assets/player.png", { frameWidth: 16, frameHeight: 32 });
+		this.load.spritesheet("coins", "assets/coins.png", { frameWidth: 16, frameHeight: 16 });
 	}
 
-	function create ()
+	function create()
 	{
 		this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, "sky").setScale(2);
 
@@ -46,12 +71,50 @@
 
 		ground.create(width/2, height - 32, "ground").setScale(2).refreshBody();
 
-		var player = this.physics.add.image(500, 100, "player");
+		cursors = this.input.keyboard.createCursorKeys();
 
+		player = this.physics.add.image(500, 100, "player");
+
+		player.body.setGravityY(600);
 		player.setVelocity(100, 200);
-		player.setBounce(1, 1);
+		player.setBounce(0.2);
 		player.setCollideWorldBounds(true);
 		this.physics.add.collider(player, ground);
+
+		coins = this.physics.add.staticGroup({
+			key: "coins",
+			repeat: 5
+		});
+		initCoins()
+		this.physics.add.overlap(player, coins, collectCoin, null, this);
+
+		score = 0;
+		scoreText = this.add.text(16, 16, "Score: " + score, { fontSize: "32px", fill: "#000" });
+	}
+	
+	function update()
+	{
+		if (coins.countActive(true) === 0)
+		{
+			initCoins()
+		}
+		if(cursors.left.isDown)
+		{
+			player.setVelocityX(-160);
+		}
+		else if(cursors.right.isDown)
+		{
+			player.setVelocityX(160);
+		}
+		else
+		{
+			player.setVelocityX(0);
+		}
+
+		if(cursors.up.isDown)
+		{
+			player.setVelocityY(-330);
+		}
 	}
 	</script>
 
