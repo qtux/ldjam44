@@ -22,7 +22,8 @@
 		physics: {
 			default: "arcade",
 			arcade: {
-				gravity: { y: 300 }
+				gravity: { y: 300 },
+				//debug: true,
 			}
 		},
 		scene: {
@@ -82,6 +83,7 @@
 
 		cursors = this.input.keyboard.createCursorKeys();
 
+		// initialize the player
 		player = this.physics.add.image(500, 100, "player");
 
 		player.body.setGravityY(600);
@@ -90,6 +92,7 @@
 		player.setCollideWorldBounds(true);
 		this.physics.add.collider(player, ground);
 
+		// initialize the coins
 		coins = this.physics.add.staticGroup({
 			key: "coins",
 			repeat: 5
@@ -97,6 +100,7 @@
 		initCoins()
 		this.physics.add.overlap(player, coins, collectCoin, null, this);
 
+		// initialize score and jump
 		score = 0;
 		scoreText = this.add.text(16, 16, "Score: " + score, { fontSize: "32px", fill: "#000" });
 		jumpLimit = 50;
