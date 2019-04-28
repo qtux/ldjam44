@@ -71,7 +71,7 @@
 		this.load.image("sky", "assets/sky.png");
 		this.load.image("background", "assets/background.png");
 		this.load.spritesheet("player", "assets/player.png", { frameWidth: 128, frameHeight: 96, width: 64, height: 80 });
-		this.load.spritesheet("coins", "assets/coins.png", { frameWidth: 16, frameHeight: 16 });
+		this.load.spritesheet("coins", "assets/currency.png", { frameWidth: 32, frameHeight: 32 });
 		// tilemap and tileset
 		this.load.tilemapTiledJSON("tilemap", "assets/tilemap_00.json");
 		this.load.image("tileset", "assets/tileset.png");
@@ -154,13 +154,24 @@
 		this.cameras.main.setBounds(0, 0, tilemap.widthInPixels, tilemap.heightInPixels);
 		this.cameras.main.startFollow(player)
 
-		// initialize the coins
+		// initialize the "coins"
 		coins = this.physics.add.staticGroup({
 			key: "coins",
 			repeat: 5
 		});
 		initCoins()
 		this.physics.add.overlap(player, coins, collectCoin, null, this);
+		this.anims.create({
+			key: "flies",
+			frames: this.anims.generateFrameNumbers("coins", { start: 0, end: 9 }),
+			frameRate: 10,
+			repeat: -1
+		});
+		coins.children.iterate(function(child) {
+			child.anims.play("flies", true);
+			child.anims.setProgress(Phaser.Math.FloatBetween(0, 1));
+			child.anims.setYoyo(Phaser.Math.Between(0, 1));
+		});
 
 		// initialize score and jump
 		score = 0;
