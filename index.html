@@ -9,13 +9,12 @@
 <body>
 
 	<script>
-	var width = window.innerWidth * window.devicePixelRatio - 20
-	var height = window.innerHeight * window.devicePixelRatio - 20
 
 	var config = {
-		type: Phaser.CANVAS,
-		width: width,
-		height: height,
+		type: Phaser.AUTO,
+		width: 1280,	// window.innerWidth * window.devicePixelRatio - 20
+		height: 800,	// window.innerHeight * window.devicePixelRatio - 20
+		pixelArt: true,
 		physics: {
 			default: "arcade",
 			arcade: {
@@ -43,7 +42,7 @@
 	{
 		coins.children.iterate(function(child) {
 			child.enableBody(true,
-				Phaser.Math.Between(40, width - 40), Phaser.Math.Between(40, height - 40),
+				Phaser.Math.Between(40, config.width - 40), Phaser.Math.Between(40, config.height - 40),
 				true, true);
 		});
 	}
@@ -73,9 +72,9 @@
 	{
 		this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, "sky").setScale(2);
 
-		ground = this.physics.add.staticGroup();
 
-		ground.create(width/2, height - 32, "ground").setScale(2).refreshBody();
+		ground = this.physics.add.staticGroup();
+		ground.create(config.width/2, config.height - 32, "ground").setScale(2).refreshBody();
 
 		cursors = this.input.keyboard.createCursorKeys();
 
