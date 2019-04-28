@@ -18,15 +18,26 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]--
 
 local suit = require "lib.suit"
+local sti = require "lib.sti.sti"
 
 local game = {}
 
 function game:enter()
 
+	w = love.graphics.getWidth()
+	h = love.graphics.getHeight()
+
+	love.physics.setMeter(32)
+
+	map = sti("assets/maps/map_00.lua", {"box2d"}) -- use bump instead of box2d?
+
+	world = love.physics.newWorld(0, 0)
+	map:box2d_init(world)
+
 end
 
 function game:update(dt)
-
+	map:update(dt)
 end
 
 function game:keypressed(key)
@@ -34,7 +45,10 @@ function game:keypressed(key)
 end
 
 function game:draw()
-
+	love.graphics.setColor(1, 1, 1)
+	map:draw()
+	love.graphics.setColor(1, 0, 0)
+	map:box2d_draw()
 end
 
 return game
