@@ -36,6 +36,7 @@
 	var game = new Phaser.Game(config);
 	var ground;
 	var player;
+	var tilemap;
 	var coins;
 	var cursors;
 	var score;
@@ -69,9 +70,11 @@
 	{
 		this.load.image("sky", "assets/sky.png");
 		this.load.image("background", "assets/background.png");
-		this.load.image("ground", "assets/ground.png");
 		this.load.spritesheet("player", "assets/player.png", { frameWidth: 16, frameHeight: 32 });
 		this.load.spritesheet("coins", "assets/coins.png", { frameWidth: 16, frameHeight: 16 });
+		// tilemap and tileset
+		this.load.tilemapTiledJSON("tilemap", "assets/tilemap_00.json");
+		this.load.image("tileset", "assets/tileset.png");
 	}
 
 	function create()
@@ -80,19 +83,27 @@
 		this.add.image(config.width/2, config.height/2, "sky").setScrollFactor(0.0)
 		this.add.image(config.width, config.height/2, "background").setScrollFactor(0.5)
 
-		ground = this.physics.add.staticGroup();
-		ground.create(config.width/2, config.height - 32, "ground").setScale(2).refreshBody();
+		// create tilemap and assign the tileset
+		tilemap = this.make.tilemap({key: "tilemap"});
+		var tileset = tilemap.addTilesetImage("tileset")
+		// create layers and restrict physics to the size of the world
+		var testLayer = tilemap.createStaticLayer("testLayer", tileset, 0, 0)
+		testLayer.setCollisionByExclusion([-1]);
 
 		cursors = this.input.keyboard.createCursorKeys();
 
 		// initialize the player
 		player = this.physics.add.image(500, 100, "player");
-
 		player.body.setGravityY(600);
 		player.setVelocity(100, 200);
 		player.setBounce(0.2);
 		player.setCollideWorldBounds(true);
-		this.physics.add.collider(player, ground);
+		this.physics.world.setBounds(0, 0, tilemap.widthInPixels, tilemap.heightInPixels);
+		this.physics.add.collider(player, testLayer);
+
+		// set camera to follow
+		this.cameras.main.setBounds(0, 0, tilemap.widthInPixels, tilemap.heightInPixels);
+		this.cameras.main.startFollow(player)
 
 		// initialize the coins
 		coins = this.physics.add.staticGroup({
@@ -104,7 +115,7 @@
 
 		// initialize score and jump
 		score = 0;
-		scoreText = this.add.text(16, 16, "Score: " + score, { fontSize: "32px", fill: "#000" });
+		scoreText = this.add.text(16, 16, "Score: " + score, { fontSize: "32px", fill: "#000" }).setScrollFactor(0);
 		jumpLimit = 50;
 		jumps = 0;
 	}
