@@ -47,9 +47,11 @@
 	function initCoins()
 	{
 		coins.children.iterate(function(child) {
-			child.enableBody(true,
-				Phaser.Math.Between(40, config.width - 40), Phaser.Math.Between(40, config.height - 40),
-				true, true);
+			do {
+				x = Phaser.Math.Between(40, tilemap.widthInPixels - 40);
+				y = Phaser.Math.Between(40, tilemap.heightInPixels - 40);
+			} while (tilemap.hasTileAtWorldXY(x, y));
+			child.enableBody(true, x, y, true, true);
 		});
 	}
 
