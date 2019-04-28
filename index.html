@@ -68,6 +68,7 @@
 	function preload()
 	{
 		this.load.image("sky", "assets/sky.png");
+		this.load.image("background", "assets/background.png");
 		this.load.image("ground", "assets/ground.png");
 		this.load.spritesheet("player", "assets/player.png", { frameWidth: 16, frameHeight: 32 });
 		this.load.spritesheet("coins", "assets/coins.png", { frameWidth: 16, frameHeight: 16 });
@@ -75,8 +76,9 @@
 
 	function create()
 	{
-		this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, "sky").setScale(2);
-
+		// add parallax background
+		this.add.image(config.width/2, config.height/2, "sky").setScrollFactor(0.0)
+		this.add.image(config.width, config.height/2, "background").setScrollFactor(0.5)
 
 		ground = this.physics.add.staticGroup();
 		ground.create(config.width/2, config.height - 32, "ground").setScale(2).refreshBody();
