@@ -96,6 +96,7 @@
 
 		// initialize the player
 		player = this.physics.add.sprite(500, 100, "player");
+		player.setCircle(player.body.halfWidth/2, player.body.halfWidth/2, player.body.halfHeight/3);
 		player.body.setGravityY(600);
 		player.setVelocity(100, 200);
 		//player.setBounce(0.2);
